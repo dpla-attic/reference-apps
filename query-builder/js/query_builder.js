@@ -130,11 +130,14 @@ var exec_form = (function () {
 
     	// Write a placeholder for the key (###)
     	$('#request').html(request_string);
-    	
-    	$.getJSON(request_string,
-			function(data) {
-    			$('#lc_response').val( FormatJSON(data, '  '));
-			});
+
+		$.ajax({
+		  url: request_string,
+		  dataType: 'jsonp',
+		  success: function(data) {
+		  	$('#lc_response').val( FormatJSON(data, '  '));
+		  }
+		});
     }
 
     // If we have a search request, parse the fields here and build the query string
