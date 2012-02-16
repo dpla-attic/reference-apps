@@ -4,39 +4,32 @@ $(document).ready(function() {
 var config = (function () { 
     var my = {};
 	
-    my.request_location = 'http://api.dp.la/dev/';
+    my.request_location = 'http://localhost/dev/';
     my.key = 'd41d8cd98f00b204e980';
     
     my.item_options = {
-    		'keyword' : 'Keyword Anywhere',
-//    		'title_exact' : 'Title Exact', 
-    		'creator' : 'Creator Exact',
+    		'keyword' : 'Keyword',
+    		'title' : 'Title',
     		'title_keyword' : 'Title Keyword',
+    		'creator' : 'Creator',
     		'creator_keyword' : 'Creator Keyword',
+    		'subject' : 'Subject Heading',
     		'subject_keyword' : 'Subject Heading Keyword',
-    		'id_isbn' : 'ISBN Exact',
-    		'id_oclc' : 'OCLC ID Exact',
-    		'id_lccn' : 'LCCN ID Exact',
-    		'id' : 'LibraryCloud ID Exact'
-//    		'language' : 'Language Exact',
-//    		'total_score' : 'Total Score'
+    		'id_isbn' : 'ISBN',
+    		'id_oclc' : 'OCLC ID',
+    		'id_lccn' : 'LCCN ID'
     };
     
     my.item_sort_options = {
-//    		'total_score' : 'Total Score',
-//    		'title_exact' : 'Title Exact', 
-    		'creator' : 'Creator Exact',
-    		'subject_keyword' : 'Subject Heading Exact',
-    		'id_isbn' : 'ISBN Exact',
-    		'id_oclc' : 'OCLC ID Exact',
-    		'id_lccn' : 'LCCN ID Exact',
-			'checkouts': 'checkouts'
+		'checkouts': 'Checkouts',
+		'creator' : 'Creator',
+		'subject' : 'Subject Heading'
     };
     
     my.item_facet_options = {
-    		'language' : 'Language Exact',
-    		'creator_exact' : 'Creator',
-    		'subject_keyword' : 'Subject Heading'
+    		'language' : 'Language',
+    		'creator' : 'Creator',
+    		'subject' : 'Subject Heading'
     };
     
     my.event_options = {
@@ -86,7 +79,8 @@ var view = (function () {
 		}
 		
 		var rows = '<div class="search_pair"><p>Search</p>';
-		rows += '<div class="form_element"><select id="search_type">' + option_string + '</select></div></div>';
+//		rows += '<div class="form_element"><select id="search_type">' + option_string + '</select></div></div>';
+		rows += '<div class="form_element"><input type="text" id="search_type" value="keyword"/></div></div>';
 		rows += '<div class="search_pair"><p>Query</p>';
 		rows += '<div class="form_element"><input type="text" id="query"/></div></div>';
 		rows += '<div class="search_pair"><p>Sort Field</p>';
@@ -126,7 +120,7 @@ var exec_form = (function () {
     
     // Makes the request and draws the results
     make_request = function(request_string) {
-    	$('#lc_response').val( 'Waiting for a response from LibraryCloud');
+    	$('#lc_response').val( 'Waiting for a response from DPLA');
 
     	// Write a placeholder for the key (###)
     	$('#request').html(request_string);
@@ -136,7 +130,10 @@ var exec_form = (function () {
 		  dataType: 'jsonp',
 		  success: function(data) {
 		  	$('#lc_response').val( FormatJSON(data, '  '));
-		  }
+		  },
+		  error: function(data) {
+  		  	$('#lc_response').val( 'Something went wonky. Is your request malformed?');
+  		  }
 		});
     }
 
@@ -151,7 +148,9 @@ var exec_form = (function () {
 		// Bulid list of facet params
 		var facets = new Array();
 		$('.checked').each(function(i, l){
-			facets.push('facet=' + $(l).find('input').val());
+		    if ($(l).find('input').val() != 'on') {
+    			facets.push('facet=' + $(l).find('input').val());
+    		}
 		 });
 
 		if (facets.length > 0) {
