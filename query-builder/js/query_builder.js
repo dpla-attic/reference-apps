@@ -4,7 +4,7 @@ $(document).ready(function() {
 var config = (function () { 
     var my = {};
 	
-    my.request_location = 'http://localhost/dev/';
+    my.request_location = 'http://api.dp.la/dev/';
     my.key = 'd41d8cd98f00b204e980';
     
     my.item_options = {
