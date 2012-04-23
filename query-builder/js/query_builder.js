@@ -4,36 +4,36 @@ $(document).ready(function() {
 var config = (function () { 
     var my = {};
 	
-    my.request_location = 'http://api.dp.la/dev/';
-    my.key = 'd41d8cd98f00b204e980';
+    my.request_location = 'http://dev.dp.la/v0.03/';
     
     my.item_options = {
-    		'keyword' : 'Keyword',
-    		'title' : 'Title',
-    		'title_keyword' : 'Title Keyword',
-    		'creator' : 'Creator',
-    		'creator_keyword' : 'Creator Keyword',
-    		'subject' : 'Subject Heading',
-    		'subject_keyword' : 'Subject Heading Keyword',
-    		'id_isbn' : 'ISBN',
-    		'id_oclc' : 'OCLC ID',
-    		'id_lccn' : 'LCCN ID'
-    };
-    
-    my.item_sort_options = {
-		'checkouts': 'Checkouts',
-		'creator' : 'Creator',
-		'subject' : 'Subject Heading'
+    		'dpla.keyword' : 'Keyword',
+    		'dpla.title' : 'Title',
+    		'dpla.title_keyword' : 'Title Keyword',
+    		'dpla.creator' : 'Creator',
+    		'dpla.creator_keyword' : 'Creator Keyword',
+    		'dpla.subject' : 'Subject Heading',
+    		'dpla.subject_keyword' : 'Subject Heading Keyword',
+    		'dpla.language': 'Language'
     };
     
     my.item_facet_options = {
-    		'language' : 'Language',
-    		'creator' : 'Creator',
-    		'subject' : 'Subject Heading'
+    		'dpla.language' : 'Language',
+    		'dpla.creator' : 'Creator',
+    		'dpla.subject' : 'Subject Heading'
     };
     
-    my.event_options = {
-    		'date' : 'Date'
+    my.contributor_options = {
+    		'dpla.keyword' : 'Keyword',
+    		'dpla.name' : 'Name',
+    		'dpla.state' : 'State',
+    		'dpla.country' : 'Country',
+    };
+
+    my.contributor_facet_options = {
+    		'dpla.type' : 'Contributor Type',
+    		'dpla.location.address.state' : 'State',
+    		'dpla.location.address.country' : 'Country',
     };
     
     return my; 
@@ -58,35 +58,30 @@ var view = (function () {
 		
 		// Buld the form DOM elements
 		var option_string = '';
-		var option_sort_string = '';
 		var option_facet_string = '';
 		if ($('#resource_type').val() == 'item') {
 			$.each(config.item_options, function(k, v) {
 				option_string += '<option value="' + k + '">' + v + '</option>';
 			 });
 			
-			$.each(config.item_sort_options, function(k, v) {
-				option_sort_string += '<option value="' + k + '">' + v + '</option>';
-			 });
-			
-			$.each(config.item_facet_options, function(k, v) {
+		     $.each(config.item_facet_options, function(k, v) {
 				option_facet_string += '<option value="' + k + '">' + v + '</option>';
 			 });
 		} else {
-			$.each(config.event_options, function(k, v) {
+			$.each(config.contributor_options, function(k, v) {
 				option_string += '<option value="' + k + '">' + v + '</option>';
+			 });
+			 
+			 $.each(config.contributor_facet_options, function(k, v) {
+				option_facet_string += '<option value="' + k + '">' + v + '</option>';
 			 });
 		}
 		
 		var rows = '<div class="search_pair"><p>Search</p>';
 //		rows += '<div class="form_element"><select id="search_type">' + option_string + '</select></div></div>';
-		rows += '<div class="form_element"><input type="text" id="search_type" value="keyword"/></div></div>';
+		rows += '<div class="form_element"><input type="text" id="search_type" value="dpla.keyword"/></div></div>';
 		rows += '<div class="search_pair"><p>Query</p>';
-		rows += '<div class="form_element"><input type="text" id="query"/></div></div>';
-		rows += '<div class="search_pair"><p>Sort Field</p>';
-		rows += '<div class="form_element"><select id="sort_field">' + option_sort_string + '</select></div></div>';
-		rows += '<div class="search_pair"><p>Sort Direction</p>';
-		rows += '<div class="form_element"><select id="sort_dir"><option value="desc" selected="selected">Descending</option><option value="asc">Ascending</option></select></div></div>';
+		rows += '<div class="form_element"><input type="text" id="query" value="juneau"/></div></div>';
 		rows += '<div class="search_pair"><p>Limit</p>';
 		rows += '<div class="form_element"><input type="text" id="limit" value="5"/></div></div>';
 		rows += '<div class="search_pair"><p>Facet</p>';
@@ -140,9 +135,8 @@ var exec_form = (function () {
     // If we have a search request, parse the fields here and build the query string
 	exec_search = function() {
 		var request_string = get_base();
-		request_string += '?search_type=' + $('#search_type').val();
-		request_string += '&query=' + $('#query').val();
-		request_string += '&sort=' + $('#sort_field').val() + ' ' + $('#sort_dir').val();
+		request_string += '?filter=' + $('#search_type').val();
+		request_string += ':' + $('#query').val();
 		request_string += '&limit=' + $('#limit').val();
 		
 		// Bulid list of facet params
