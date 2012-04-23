@@ -4,7 +4,7 @@ $(document).ready(function() {
 var config = (function () { 
     var my = {};
 	
-    my.request_location = 'http://dev.dp.la/v0.03/';
+    my.request_location = 'http://api.dp.la/v0.03/';
     
     my.item_options = {
     		'dpla.keyword' : 'Keyword',
